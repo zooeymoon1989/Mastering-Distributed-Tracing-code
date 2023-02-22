@@ -2,12 +2,11 @@ package main
 
 import (
 	"Mastering-Distributed-Tracing-code/chapter4/lib/tracing"
+	"Mastering-Distributed-Tracing-code/chapter4/othttp"
 	"Mastering-Distributed-Tracing-code/chapter4/people"
 	"encoding/json"
 	"github.com/opentracing/opentracing-go"
-	ottag "github.com/opentracing/opentracing-go/ext"
 	otlog "github.com/opentracing/opentracing-go/log"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -17,33 +16,21 @@ var repo *people.Repository
 func main() {
 	tracer, closer := tracing.Init("go-4-bigbrother")
 	defer closer.Close()
-	opentracing.SetGlobalTracer(tracer)
 
+	opentracing.SetGlobalTracer(tracer)
 	repo = people.NewRepository()
 	defer repo.Close()
 
 	http.HandleFunc("/getPerson/", handleGetPerson)
-
-	log.Print("Listening on http://localhost:8081/")
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	othttp.ListenAndServe(":8081", "/getPerson")
 }
 
 func handleGetPerson(w http.ResponseWriter, r *http.Request) {
-	// Extract() returns a SpanContext instance given `format` and `carrier`.
-	spanCtx, _ := opentracing.GlobalTracer().Extract(
-		opentracing.HTTPHeaders,
-		opentracing.HTTPHeadersCarrier(r.Header),
-	)
 
-	span := opentracing.GlobalTracer().StartSpan(
-		"/getPerson",
-		ottag.RPCServerOption(spanCtx))
-
-	defer span.Finish()
-	ctx := opentracing.ContextWithSpan(r.Context(), span)
+	span := opentracing.SpanFromContext(r.Context())
 
 	name := strings.TrimPrefix(r.URL.Path, "/getPerson/")
-	person, err := repo.GetPerson(ctx, name)
+	person, err := repo.GetPerson(r.Context(), name)
 	if err != nil {
 		span.SetTag("error", true)
 		span.LogFields(otlog.Error(err))
