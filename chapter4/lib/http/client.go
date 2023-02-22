@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/opentracing/opentracing-go"
+	ottag "github.com/opentracing/opentracing-go/ext"
 	"io/ioutil"
 	"net/http"
 )
@@ -11,13 +12,16 @@ import (
 // Get executes an HTTP GET request and returns the response body.
 // Any errors or non-200 status code result in an error.
 func Get(ctx context.Context, operationName, url string) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
 	span, ctx := opentracing.StartSpanFromContext(ctx, operationName)
 	defer span.Finish()
 
+	ottag.SpanKindRPCClient.Set(span)
+	ottag.HTTPUrl.Set(span, url)
+	ottag.HTTPMethod.Set(span, http.MethodGet)
 	// Inject() takes the `sm` SpanContext instance and injects it for
 	// propagation within `carrier`.
 	opentracing.GlobalTracer().Inject(

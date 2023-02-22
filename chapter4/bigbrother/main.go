@@ -5,6 +5,7 @@ import (
 	"Mastering-Distributed-Tracing-code/chapter4/people"
 	"encoding/json"
 	"github.com/opentracing/opentracing-go"
+	ottag "github.com/opentracing/opentracing-go/ext"
 	otlog "github.com/opentracing/opentracing-go/log"
 	"log"
 	"net/http"
@@ -36,7 +37,7 @@ func handleGetPerson(w http.ResponseWriter, r *http.Request) {
 
 	span := opentracing.GlobalTracer().StartSpan(
 		"/getPerson",
-		opentracing.ChildOf(spanCtx))
+		ottag.RPCServerOption(spanCtx))
 
 	defer span.Finish()
 	ctx := opentracing.ContextWithSpan(r.Context(), span)

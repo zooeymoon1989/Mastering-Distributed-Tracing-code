@@ -4,6 +4,7 @@ import (
 	"Mastering-Distributed-Tracing-code/chapter4/lib/tracing"
 	"context"
 	"github.com/opentracing/opentracing-go"
+	ottag "github.com/opentracing/opentracing-go/ext"
 	"log"
 	"net/http"
 )
@@ -29,7 +30,7 @@ func handleFormatGreeting(w http.ResponseWriter, r *http.Request) {
 
 	span := opentracing.GlobalTracer().StartSpan(
 		"/formatGreeting",
-		opentracing.ChildOf(spanCtx))
+		ottag.RPCServerOption(spanCtx))
 
 	defer span.Finish()
 	ctx := opentracing.ContextWithSpan(r.Context(), span)
