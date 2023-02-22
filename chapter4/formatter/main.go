@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	tracer, closer := tracing.Init("go-4-bigbrother")
+	tracer, closer := tracing.Init("go-4-formatter")
 	defer closer.Close()
 	opentracing.SetGlobalTracer(tracer)
 
