@@ -4,6 +4,7 @@ import (
 	"Mastering-Distributed-Tracing-code/chapter4/lib/model"
 	"context"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/opentracing/opentracing-go"
 	"log"
 )
