@@ -3,6 +3,7 @@ package main
 import (
 	"Mastering-Distributed-Tracing-code/lib/tracing"
 	"Mastering-Distributed-Tracing-code/people"
+	"context"
 	opentracing "github.com/opentracing/opentracing-go"
 	otlog "github.com/opentracing/opentracing-go/log"
 	"log"
@@ -35,8 +36,10 @@ func handleSayHello(w http.ResponseWriter, r *http.Request) {
 	span := tracer.StartSpan("say-hello")
 	defer span.Finish()
 
+	ctx := opentracing.ContextWithSpan(r.Context(), span)
+
 	name := strings.TrimPrefix(r.URL.Path, "/sayHello/")
-	greeting, err := SayHello(name, span)
+	greeting, err := SayHello(ctx, name)
 	if err != nil {
 		// add opentracing log
 		span.SetTag("error", true)
@@ -50,36 +53,32 @@ func handleSayHello(w http.ResponseWriter, r *http.Request) {
 }
 
 // SayHello creates a greeting for the named person.
-// add opentracing span
-func SayHello(name string, span opentracing.Span) (string, error) {
-	person, err := repo.GetPerson(name, span)
+func SayHello(ctx context.Context, name string) (string, error) {
+	person, err := repo.GetPerson(ctx, name)
 	if err != nil {
 		return "", err
 	}
 
-	// add k-v pair to span
-	span.LogKV(
+	// add logKV from context passed by parameters
+	opentracing.SpanFromContext(ctx).LogKV(
 		"name", person.Name,
 		"title", person.Title,
 		"description", person.Description,
 	)
 
 	return FormatGreeting(
+		ctx,
 		person.Name,
 		person.Title,
 		person.Description,
-		span,
 	), nil
 }
 
 // FormatGreeting combines information about a person into a greeting string.
 // add span for context
-func FormatGreeting(name, title, description string, span opentracing.Span) string {
+func FormatGreeting(ctx context.Context, name, title, description string) string {
 	// add span in this
-	span = opentracing.GlobalTracer().StartSpan(
-		"format-greeting",
-		opentracing.ChildOf(span.Context()),
-	)
+	span, _ := opentracing.StartSpanFromContext(ctx, "format-greeting")
 	defer span.Finish()
 
 	response := "Hello, "
