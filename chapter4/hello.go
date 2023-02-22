@@ -55,7 +55,7 @@ func formatGreeting(ctx context.Context, person *model.Person) (string, error) {
 	v.Set("title", person.Title)
 	v.Set("description", person.Description)
 	url := "http://localhost:8082/formatGreeting?" + v.Encode()
-	res, err := xhttp.Get(url)
+	res, err := xhttp.Get(ctx, "formatGreeting", url)
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +63,7 @@ func formatGreeting(ctx context.Context, person *model.Person) (string, error) {
 }
 
 func getPerson(ctx context.Context, name string) (*model.Person, error) {
-	res, err := xhttp.Get("http://localhost:8081/getPerson/" + name)
+	res, err := xhttp.Get(ctx, "getPerson", "http://localhost:8081/getPerson/"+name)
 	if err != nil {
 		return nil, err
 	}

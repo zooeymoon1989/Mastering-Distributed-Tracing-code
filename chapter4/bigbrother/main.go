@@ -28,7 +28,16 @@ func main() {
 }
 
 func handleGetPerson(w http.ResponseWriter, r *http.Request) {
-	span := opentracing.GlobalTracer().StartSpan("/getPerson")
+	// Extract() returns a SpanContext instance given `format` and `carrier`.
+	spanCtx, _ := opentracing.GlobalTracer().Extract(
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(r.Header),
+	)
+
+	span := opentracing.GlobalTracer().StartSpan(
+		"/getPerson",
+		opentracing.ChildOf(spanCtx))
+
 	defer span.Finish()
 	ctx := opentracing.ContextWithSpan(r.Context(), span)
 

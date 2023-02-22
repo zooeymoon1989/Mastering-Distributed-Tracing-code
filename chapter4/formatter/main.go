@@ -20,7 +20,17 @@ func main() {
 }
 
 func handleFormatGreeting(w http.ResponseWriter, r *http.Request) {
-	span := opentracing.GlobalTracer().StartSpan("/formatGreeting")
+
+	// Extract() returns a SpanContext instance given `format` and `carrier`.
+	spanCtx, _ := opentracing.GlobalTracer().Extract(
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(r.Header),
+	)
+
+	span := opentracing.GlobalTracer().StartSpan(
+		"/formatGreeting",
+		opentracing.ChildOf(spanCtx))
+
 	defer span.Finish()
 	ctx := opentracing.ContextWithSpan(r.Context(), span)
 
