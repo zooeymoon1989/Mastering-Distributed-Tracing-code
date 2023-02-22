@@ -18,7 +18,8 @@ func main() {
 	defer repo.Close()
 
 	// init in application
-	tracer, closer := tracing.Init("go-2-hello")
+	tr, closer := tracing.Init("go-2-hello")
+	tracer = tr
 	defer closer.Close()
 	// set global tracer
 	opentracing.SetGlobalTracer(tracer)
