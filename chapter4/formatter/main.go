@@ -54,7 +54,13 @@ func FormatGreeting(
 	)
 	defer span.Finish()
 
-	response := "Hello, "
+	greeting := span.BaggageItem("greeting")
+	if greeting == "" {
+		greeting = "hello"
+	}
+
+	response := greeting + ", "
+
 	if title != "" {
 		response += title + " "
 	}
