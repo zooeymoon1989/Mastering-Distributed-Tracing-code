@@ -77,7 +77,7 @@ func SayHello(ctx context.Context, name string) (string, error) {
 // FormatGreeting combines information about a person into a greeting string.
 // add span for context
 func FormatGreeting(ctx context.Context, name, title, description string) string {
-	// add span in this
+
 	span, _ := opentracing.StartSpanFromContext(ctx, "format-greeting")
 	defer span.Finish()
 
