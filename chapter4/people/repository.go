@@ -1,10 +1,9 @@
 package people
 
 import (
-	"Mastering-Distributed-Tracing-code/lib/model"
+	"Mastering-Distributed-Tracing-code/chapter4/lib/model"
 	"context"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/opentracing/opentracing-go"
 	"log"
 )
@@ -34,19 +33,19 @@ func NewRepository() *Repository {
 // GetPerson tries to find the person in the database by name.
 // If not found, it still returns a Person object with only name
 // field populated.
-func (r *Repository) GetPerson(ctx context.Context, name string) (model.Person, error) {
+func (r *Repository) GetPerson(
+	ctx context.Context,
+	name string,
+) (model.Person, error) {
 	query := "select title, description from people where name = ?"
 
-	// StartSpanFromContext add context
-	// start a new span as a child-of the span currently stored in the context
-	span, ctx := opentracing.StartSpanFromContext(ctx, "get-person", opentracing.Tag{
-		Key:   "db.statement",
-		Value: query,
-	})
-	// remember to finish this function
+	span, ctx := opentracing.StartSpanFromContext(
+		ctx,
+		"get-person",
+		opentracing.Tag{Key: "db.statement", Value: query},
+	)
 	defer span.Finish()
 
-	// sql query add ctx
 	rows, err := r.db.QueryContext(ctx, query, name)
 	if err != nil {
 		return model.Person{}, err
