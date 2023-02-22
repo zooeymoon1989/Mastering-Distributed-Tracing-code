@@ -4,6 +4,7 @@ import (
 	"Mastering-Distributed-Tracing-code/lib/model"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/opentracing/opentracing-go"
 	"log"
 )
 
@@ -34,6 +35,18 @@ func NewRepository() *Repository {
 // field populated.
 func (r *Repository) GetPerson(name string) (model.Person, error) {
 	query := "select title, description from people where name = ?"
+
+	// get global opentracing
+	// start span
+	// add tag
+	span := opentracing.GlobalTracer().StartSpan(
+		"get-person",
+		opentracing.Tag{
+			Key:   "db.statement",
+			Value: query,
+		},
+	)
+	defer span.Finish()
 	rows, err := r.db.Query(query, name)
 	if err != nil {
 		return model.Person{}, err

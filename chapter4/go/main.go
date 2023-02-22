@@ -11,8 +11,6 @@ import (
 )
 
 var repo *people.Repository
-
-// initialize opentracing
 var tracer opentracing.Tracer
 
 func main() {
@@ -20,9 +18,10 @@ func main() {
 	defer repo.Close()
 
 	// init in application
-	tr, closer := tracing.Init("go-2-hello")
+	tracer, closer := tracing.Init("go-2-hello")
 	defer closer.Close()
-	tracer = tr
+	// set global tracer
+	opentracing.SetGlobalTracer(tracer)
 
 	http.HandleFunc("/sayHello/", handleSayHello)
 
@@ -44,6 +43,7 @@ func handleSayHello(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// add tag response
 	span.SetTag("response", greeting)
 	w.Write([]byte(greeting))
 }
@@ -72,6 +72,10 @@ func SayHello(name string, span opentracing.Span) (string, error) {
 
 // FormatGreeting combines information about a person into a greeting string.
 func FormatGreeting(name, title, description string) string {
+	// add span in this
+	span := opentracing.GlobalTracer().StartSpan("format-greeting")
+	span.Finish()
+
 	response := "Hello, "
 	if title != "" {
 		response += title + " "
