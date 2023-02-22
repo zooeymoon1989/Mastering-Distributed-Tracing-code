@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/opentracing-contrib/go-stdlib/nethttp"
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 	otlog "github.com/opentracing/opentracing-go/log"
 	"net/http"
 	"net/url"
