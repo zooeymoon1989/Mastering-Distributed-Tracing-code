@@ -33,14 +33,16 @@ func NewRepository() *Repository {
 // GetPerson tries to find the person in the database by name.
 // If not found, it still returns a Person object with only name
 // field populated.
-func (r *Repository) GetPerson(name string) (model.Person, error) {
+func (r *Repository) GetPerson(name string, span opentracing.Span) (model.Person, error) {
 	query := "select title, description from people where name = ?"
 
 	// get global opentracing
 	// start span
 	// add tag
-	span := opentracing.GlobalTracer().StartSpan(
+	// statement context casualty
+	span = opentracing.GlobalTracer().StartSpan(
 		"get-person",
+		opentracing.ChildOf(span.Context()),
 		opentracing.Tag{
 			Key:   "db.statement",
 			Value: query,
