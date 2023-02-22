@@ -80,7 +80,7 @@ func FormatGreeting(name, title, description string, span opentracing.Span) stri
 		"format-greeting",
 		opentracing.ChildOf(span.Context()),
 	)
-	span.Finish()
+	defer span.Finish()
 
 	response := "Hello, "
 	if title != "" {
