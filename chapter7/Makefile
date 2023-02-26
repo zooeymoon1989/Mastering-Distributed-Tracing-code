@@ -7,10 +7,10 @@ build-app:
 deploy-app:
 	istioctl kube-inject -f app.yml | kubectl apply -f -
 	kubectl apply -f gateway.yml
-	istioctl install -f routing.yml
+	kubectl apply -f routing.yml
 
 delete-app:
-	istioctl uninstall -f routing.yml
+	kubectl delete -f routing.yml
 	kubectl delete -f app.yml
 
 hostport:
