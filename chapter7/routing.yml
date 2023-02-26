@@ -19,16 +19,41 @@
 #         host: formatter-svc
 #         subset: v1
 ---
+# apiVersion: networking.istio.io/v1beta1
+# kind: DestinationRule
+# metadata:
+#   name: formatter-svc-destination
+# spec:
+#   host: formatter-svc
+#   subsets:
+#   - name: v1
+#     labels:
+#       version: v1
+#   - name: v2
+#     labels:
+#       version: v2
 apiVersion: networking.istio.io/v1beta1
-kind: DestinationRule
+kind: VirtualService
 metadata:
-  name: formatter-svc-destination
+  name: reviews-route
 spec:
-  host: formatter-svc
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
+  hosts:
+  - reviews.prod.svc.cluster.local
+  http:
+  - name: "reviews-v2-routes"
+    match:
+    - uri:
+        prefix: "/wpcatalog"
+    - uri:
+        prefix: "/consumercatalog"
+    rewrite:
+      uri: "/newcatalog"
+    route:
+    - destination:
+        host: reviews.prod.svc.cluster.local
+        subset: v2
+  - name: "reviews-v1-route"
+    route:
+    - destination:
+        host: reviews.prod.svc.cluster.local
+        subset: v1
