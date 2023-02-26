@@ -21,12 +21,12 @@ hostport:
 jaeger:
 	kubectl port-forward -n istio-system $$(kubectl \
 		get pod -n istio-system -l app=jaeger \
-		-o jsonpath='{.items[0].metadata.name}') 16686:16686
+		-o jsonpath='{.items[0].metadata.name}') 16686:16686 --address=0.0.0.0
 
 service-graph:
 	kubectl -n istio-system port-forward $$(kubectl \
 		get pod -n istio-system -l app=servicegraph \
-		-o jsonpath='{.items[0].metadata.name}') 8088:8088
+		-o jsonpath='{.items[0].metadata.name}') 8088:8088  --address=0.0.0.0
 
 logs-hello:
 	kubectl logs $$(kubectl get pod -l app=hello-svc \
