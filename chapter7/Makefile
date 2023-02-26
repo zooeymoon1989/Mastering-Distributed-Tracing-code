@@ -10,7 +10,7 @@ deploy-app:
 	istioctl install -f routing.yml
 
 delete-app:
-	istioctl delete -f routing.yml
+	istioctl uninstall -f routing.yml
 	kubectl delete -f app.yml
 
 hostport:
