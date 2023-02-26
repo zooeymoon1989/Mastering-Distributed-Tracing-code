@@ -15,12 +15,15 @@ spec:
   - name: http
     port: 8080
 ---
-apiVersion: extensions/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello-svc
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: hello-svc
   template:
     metadata:
       labels:
@@ -55,12 +58,15 @@ spec:
   - name: http
     port: 8080
 ---
-apiVersion: extensions/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: formatter-svc-v1
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: formatter-svc
   template:
     metadata:
       labels:
@@ -78,12 +84,15 @@ spec:
         - name: app_name
           value: "formatter"
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: formatter-svc-v2
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: formatter-svc
   template:
     metadata:
       labels:
