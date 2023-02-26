@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: hello-svc
-        image: hello-app:latest
+        image: zooeymoon1989/hello-app:latest
         imagePullPolicy: Never
         ports:
         - name: http
@@ -75,7 +75,7 @@ spec:
     spec:
       containers:
       - name: formatter-svc
-        image: hello-app:latest
+        image: zooeymoon1989/hello-app:latest
         imagePullPolicy: Never
         ports:
         - name: http
@@ -101,7 +101,7 @@ spec:
     spec:
       containers:
       - name: formatter-svc
-        image: hello-app:latest
+        image: zooeymoon1989/hello-app:latest
         imagePullPolicy: Never
         ports:
         - name: http
