@@ -1,23 +1,23 @@
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: formatter-virtual-svc
-spec:
-  hosts:
-  - formatter-svc
-  http:
-  - match:
-    - headers:
-        baggage-user-agent:
-          regex: .*Netscape.*
-    route:
-    - destination:
-        host: formatter-svc
-        subset: v2
-  - route:
-    - destination:
-        host: formatter-svc
-        subset: v1
+# apiVersion: networking.istio.io/v1beta1
+# kind: VirtualService
+# metadata:
+#   name: formatter-virtual-svc
+# spec:
+#   hosts:
+#   - formatter-svc
+#   http:
+#   - match:
+#     - headers:
+#         baggage-user-agent:
+#           regex: .*Netscape.*
+#     route:
+#     - destination:
+#         host: formatter-svc
+#         subset: v2
+#   - route:
+#     - destination:
+#         host: formatter-svc
+#         subset: v1
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
