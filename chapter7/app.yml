@@ -32,7 +32,7 @@ spec:
       containers:
       - name: hello-svc
         image: zooeymoon1989/hello-app:latest
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
         - name: http
           containerPort: 8080
@@ -76,7 +76,7 @@ spec:
       containers:
       - name: formatter-svc
         image: zooeymoon1989/hello-app:latest
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
         - name: http
           containerPort: 8080
