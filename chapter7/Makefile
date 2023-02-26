@@ -1,5 +1,5 @@
 build-app:
-	./mvnw install
+	./mvnw clean install
 	docker build -t zooeymoon1989/hello-app:latest .
 	@echo '*** make sure the right docker repository is used'
 	@echo '*** on minikube run this first: eval $$(minikube docker-env)'
